@@ -26,9 +26,9 @@ class StreamlitApp:
         if st.button('review my actions'):
             self.review_actions()
 
-        st.markdown('---')  # Add a horizontal line
-        if st.button('Download the preprocessed file'):
-            self.submit_clicked()
+        # st.markdown('---')  # Add a horizontal line
+        # if st.button('Download the preprocessed file'):
+        #     self.submit_clicked()
 
     def handle_null_values(self):
         st.subheader('Step 1: Handling Null Values')
@@ -138,6 +138,7 @@ class StreamlitApp:
         if len(self.final_cols_to_drop) != 0:
             st.text('The following columns will be dropped')
             st.text(' '.join(self.final_cols_to_drop))
+        self.submit_clicked()
 
     def drop_unnecessary_cols(self):
         st.subheader('Step 4: Drop unnecessary columns')
