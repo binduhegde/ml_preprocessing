@@ -9,9 +9,58 @@ np.bool = np.bool_
 np.object = object
 
 
+def style_heading(text):
+    left = """<div style="position: relative; font-family: Arial, sans-serif; font-size: 20px; display: inline-block; margin-top: 50px; margin-bottom: 50px; margin-left: 5px;">
+    <span style="position: absolute; top: 50%; left: 0; transform: translate(-50%, -50%); width: 70px; height: 70px; background-color: #F9C58D; border-radius: 50%;"></span>
+    <span style="position: relative; left: 5px;">"""
+    right = """</span>
+</div>"""
+    return left + text + right
+
+# def style_list(index, heading, items):
+#     result = f"""<div style="position: relative; font-family: Arial, sans-serif; font-size: 20px; display: inline-block; margin-top: 50px; margin-bottom: 50px; margin-left: 5px;">
+#     <span style="position: absolute; top: 50%; left: 0; transform: translate(-50%, -50%); width: 70px; height: 70px; background-color: #F9C58D; border-radius: 50%;">{index}</span>
+#     <span style="position: relative; left: 5px;">{heading}</span></div>
+#     """
+
+
+def create_styled_div(index, heading, items):
+    items_html = ''.join(
+        [f"<div style='border-radius: 5px; margin-right: 5px; color: white; padding-left: 3px; padding-right: 3px; font-size: 12px; font-family: IBM Plex Sans, sans-serif; line-height: 1.6; background-color: #ff0066; padding-left: 15px; padding-right: 15px; padding-top: 2px; padding-bottom: 2px;'>{item}</div>" for item in items])
+    return f"""
+    <div style='border: 1px solid #ff0066; padding: 20px; border-radius: 10px; max-width: 600px; position: relative; font-family: Arial, sans-serif; margin-bottom: 20px; margin-left: 5%;'>
+        <div style='position: absolute; top: 20%; left: 5%; width: 30px; height: 30px; background-color: #ff0066; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;'>
+            {index}
+        </div>
+        <div style='margin-left: 10%;'>
+            <h3 style='margin: 0;'>{heading}</h3>
+        </div>
+        <div style='margin-top: 20px; display: flex; flex-wrap: wrap;'>
+            {items_html}
+        </div>
+    </div>
+    """
+
+
+def style_subtext(text):
+    return f"<p style='font-family: Arial, sans-serif; font-size: 16px; margin-bottom: 10px;'>{text}</p>"
+
+
+def style_list(items):
+    return f"<ul style='font-family: Arial, sans-serif; font-size: 16px; margin-bottom: 20px;'>{''.join([f'<li>{item}</li>' for item in items])}</ul>"
+
+# step1 = """<div style="position: relative; font-family: Arial, sans-serif; font-size: 20px; display: inline-block; margin-top: 50px; margin-bottom: 50px; margin-left: 5px;">
+#     <span style="position: absolute; top: 50%; left: 0; transform: translate(-50%, -50%); width: 70px; height: 70px; background-color: #F9C58D; border-radius: 50%;"></span>
+#     <span style="position: relative; left: 5px;">Step 1: Handling Missing Values</span>
+# </div>"""
+
+
 class StreamlitApp:
     def __init__(self) -> None:
-        st.title('Machine Learning Preprocessing')
+        title = '<div style="background: linear-gradient(to right,#F9C58D,#F492F0); color: transparent; color: black; font-family: Helvetica; font-weight: bold; font-size: 40px; text-align: center; padding: 30px; letter-spacing:1px; width: 100%; margin-bottom: 20px;"><h2>Machine Learning Preprocessor</h2></div>'
+        st.markdown(title, unsafe_allow_html=True)
+
+        # st.title('Machine Learning Preprocessing')
         self.df_file = st.file_uploader('Upload the Dataframe', type=['csv'])
 
         if self.df_file is not None:
@@ -31,7 +80,10 @@ class StreamlitApp:
         #     self.submit_clicked()
 
     def handle_null_values(self):
-        st.subheader('Step 1: Handling Null Values')
+        step1 = style_heading('Step 1: Handling Misisng Values')
+        st.markdown(step1, unsafe_allow_html=True)
+
+        # st.subheader('Step 1: Handling Null Values')
         st.text('These are the description of the columns with missing values')
         # Get columns with at least one missing value
         columns_with_na = [
@@ -77,7 +129,9 @@ class StreamlitApp:
             'I want to fill the missing values in these columns with the mode', columns_with_na)
 
     def encode_categorical_data(self):
-        st.subheader('Step 2: Encoding Categorical Data')
+        step2 = style_heading('Step 2: Encoding Categorical Data')
+        st.markdown(step2, unsafe_allow_html=True)
+
         st.text('These are the categorical feautures')
         cat_cols = self.df.select_dtypes(include='object').columns
 
@@ -98,7 +152,10 @@ class StreamlitApp:
             'I want to label-encode these columns', cat_cols)
 
     def feature_scaling(self):
-        st.subheader('Step 3: Feature Scaling')
+        step3 = style_heading('Step 3: Feature Scaling')
+        st.markdown(step3, unsafe_allow_html=True)
+
+        # st.subheader('Step 3: Feature Scaling')
         st.text('These are the numerical columns')
         num_cols = self.df.select_dtypes(exclude='object').columns
 
@@ -110,38 +167,59 @@ class StreamlitApp:
             'I want to Standard scale these columns', num_cols)
 
     def review_actions(self):
+        ind = 1
+        step5 = style_heading('Step 5: Review your Actions')
+        st.markdown(step5, unsafe_allow_html=True)
+
         self.set_user_pref()
-        st.subheader('Step 5: Review the actions')
+
         if len(self.final_remove_cols) != 0:
-            st.text('The following columns will be removed')
-            st.text(' '.join(self.final_remove_cols))
+            html = create_styled_div(
+                ind, 'Drop missing values in these columns', self.final_remove_cols)
+            st.markdown(html, unsafe_allow_html=True)
+            ind += 1
+
         if len(self.final_fill_mean_cols) != 0:
-            st.text(
-                'The missing values in the following column will be filled with the mean')
-            st.text(' '.join(self.final_fill_mean_cols))
+            html = create_styled_div(
+                ind, 'Fill Null Values with Mean', self.final_fill_mean_cols)
+            st.markdown(html, unsafe_allow_html=True)
+            ind += 1
+
         if len(self.final_fill_median_cols) != 0:
-            st.text(
-                'The missing values in the following column will be filled with the median')
-            st.text(' '.join(self.final_fill_median_cols))
+            html = create_styled_div(
+                ind, 'Fill Null Values with Median', self.final_fill_median_cols)
+            st.markdown(html, unsafe_allow_html=True)
+            ind += 1
+
         if len(self.final_fill_mode_cols) != 0:
-            st.text(
-                'The missing values in the following column will be filled with the mode')
-            st.text(' '.join(self.final_fill_mode_cols))
+            html = create_styled_div(
+                ind, 'Fill Null Values with Mode', self.final_fill_mode_cols)
+            st.markdown(html, unsafe_allow_html=True)
+            ind += 1
 
         if len(self.final_onehot_encoding_cols) != 0:
-            st.text('The following columns will be one-hot encoded')
-            st.text(' '.join(self.final_onehot_encoding_cols))
+            html = create_styled_div(
+                ind, 'One-hot Encode these columns', self.final_onehot_encoding_cols)
+            st.markdown(html, unsafe_allow_html=True)
+            ind += 1
+
         if len(self.final_label_encoding_cols) != 0:
-            st.text('The following columns will be label encoded')
-            st.text(' '.join(self.final_label_encoding_cols))
+            html = create_styled_div(
+                ind, 'Label-encode these Columns', self.final_label_encoding_cols)
+            st.markdown(html, unsafe_allow_html=True)
+            ind += 1
 
         if len(self.final_cols_to_drop) != 0:
-            st.text('The following columns will be dropped')
-            st.text(' '.join(self.final_cols_to_drop))
+            html = create_styled_div(
+                ind, 'Drop these Columns', self.final_cols_to_drop)
+            st.markdown(html, unsafe_allow_html=True)
+            ind += 1
         self.submit_clicked()
 
     def drop_unnecessary_cols(self):
-        st.subheader('Step 4: Drop unnecessary columns')
+        step4 = style_heading('Step 4: Drop Unnecessary Columns')
+        st.markdown(step4, unsafe_allow_html=True)
+
         self.cols_to_drop = st.multiselect(
             'I want to drop these columns', self.df.columns)
 
@@ -150,6 +228,8 @@ class StreamlitApp:
         self.preprocess()
 
         csv = self.result.to_csv(index=False).encode('utf-8')
+        st.markdown('---')  # Add a horizontal line
+
         st.download_button(
             label="Download Preprocessed Data",
             data=csv,
