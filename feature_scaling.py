@@ -1,5 +1,4 @@
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 class FeatureScaling:
     def __init__(self, data) -> None:
