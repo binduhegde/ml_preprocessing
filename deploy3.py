@@ -205,6 +205,18 @@ class StreamlitApp:
             st.markdown(html, unsafe_allow_html=True)
             ind += 1
 
+        if len(self.final_minmax_scaler_cols) != 0:
+            html = create_styled_div(
+                ind, 'Min-max-scale these columns', self.final_minmax_scaler_cols)
+            st.markdown(html, unsafe_allow_html=True)
+            ind += 1
+
+        if len(self.final_std_scaler_cols) != 0:
+            html = create_styled_div(
+                ind, 'Standard-scale these columns', self.final_std_scaler_cols)
+            st.markdown(html, unsafe_allow_html=True)
+            ind += 1
+
         if len(self.final_cols_to_drop) != 0:
             html = create_styled_div(
                 ind, 'Drop these Columns', self.final_cols_to_drop)
