@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
+# 2 ways. onehot encoding and label encoding
 class Encoding:
     def __init__(self, data) -> None:
         self.data = data

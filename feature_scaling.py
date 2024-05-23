@@ -1,5 +1,6 @@
 import pandas as pd
 
+# 2 ways. minmax scaling and standard scaling
 class FeatureScaling:
     def __init__(self, data) -> None:
         self.data = data
@@ -9,7 +10,7 @@ class FeatureScaling:
             mean = self.data[col].mean()
             standard_deviation = self.data[col].std()
             self.data[col] = (self.data[col] - mean)/(standard_deviation)
-
+    # aka minmax scaling
     def normalization(self, cols):
         for col in cols:
             minValue = self.data[col].min()
